@@ -4,19 +4,40 @@ class TeacherRepo {
   async createNewTeacher(data) {
     return await prisma.teacher.create({
       data: {
-        id: data.id, // Unique ID for the teacher
+        id: data.id || crypto.randomUUID(), // Ensure id exists
         username: data.username,
         name: data.name,
         surname: data.surname,
-        email: data.email, // Optional
-        phone: data.phone, // Optional
+        email: data.email || null,
+        phone: data.phone || null,
         address: data.address,
         bloodType: data.bloodType,
         sex: data.sex,
-        subjects: data.subjects ? { connect: data.subjects } : undefined,
-        classes: data.classes ? { connect: data.classes } : undefined,
-        lessons: data.lessons ? { connect: data.lessons } : undefined,
-        birthday: data.birthday, // Must be a valid ISO-8601 DateTime string
+        birthday: new Date(data.birthday), // Ensure valid Date format
+
+        subjects: data.subjects?.length
+          ? {
+              connect: data.subjects
+                .filter((s) => s.id)
+                .map((s) => ({ id: s.id })),
+            }
+          : undefined,
+
+        classes: data.classes?.length
+          ? {
+              connect: data.classes
+                .filter((c) => c.id)
+                .map((c) => ({ id: c.id })),
+            }
+          : undefined,
+
+        lessons: data.lessons?.length
+          ? {
+              connect: data.lessons
+                .filter((l) => l.id)
+                .map((l) => ({ id: l.id })),
+            }
+          : undefined,
       },
     });
   }
