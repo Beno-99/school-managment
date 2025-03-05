@@ -14,6 +14,8 @@ class TeacherDTO {
     lessons,
     subjects,
   }) {
+    // Generate a unique ID for the teacher
+    this.id = `teacher_${username}_${Date.now()}`;
     this.username = username;
     this.name = name;
     this.surname = surname;
@@ -22,20 +24,24 @@ class TeacherDTO {
     this.address = address;
     this.img = img;
     this.bloodType = bloodType;
-    this.sex = sex;
+    // Convert sex to uppercase to match the UserSex enum
+    this.sex = sex.toUpperCase();
     this.birthday = birthday;
-    this.classes = classes.map((className) => ({
-      name: className,
-      capacity: 20,
-    })); // Default capacity
-    this.lessons = lessons.map((lessonName) => ({
-      name: lessonName,
-      capacity: 40,
-    })); // Default capacity
-    this.subjects = subjects.map((subjectName) => ({
-      name: subjectName,
-      capacity: 30,
-    })); // Default capacity
+    
+    // Format classes for proper connection in Prisma
+    this.classes = classes.map((classItem) => ({
+      connect: { id: classItem.id }
+    }));
+    
+    // Format lessons for proper connection in Prisma
+    this.lessons = lessons.map((lessonItem) => ({
+      connect: { id: lessonItem.id }
+    }));
+    
+    // Format subjects for proper connection in Prisma
+    this.subjects = subjects.map((subjectItem) => ({
+      connect: { id: subjectItem.id }
+    }));
   }
 }
 export default TeacherDTO;

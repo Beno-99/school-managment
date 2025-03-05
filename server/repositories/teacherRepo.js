@@ -13,31 +13,10 @@ class TeacherRepo {
         address: data.address,
         bloodType: data.bloodType,
         sex: data.sex,
-        birthday: new Date(data.birthday), // Ensure valid Date format
-
-        subjects: data.subjects?.length
-          ? {
-              connect: data.subjects
-                .filter((s) => s.id)
-                .map((s) => ({ id: s.id })),
-            }
-          : undefined,
-
-        classes: data.classes?.length
-          ? {
-              connect: data.classes
-                .filter((c) => c.id)
-                .map((c) => ({ id: c.id })),
-            }
-          : undefined,
-
-        lessons: data.lessons?.length
-          ? {
-              connect: data.lessons
-                .filter((l) => l.id)
-                .map((l) => ({ id: l.id })),
-            }
-          : undefined,
+        subjects: data.subjects ? { connect: data.subjects } : undefined,
+        classes: data.classes ? { connect: data.classes } : undefined,
+        lessons: data.lessons ? { connect: data.lessons } : undefined,
+        birthday: data.birthday, // Must be a valid ISO-8601 DateTime string
       },
     });
   }
