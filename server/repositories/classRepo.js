@@ -1,4 +1,4 @@
-import prisma from "../database";
+import prisma from "../database.js";
 class ClassRepository {
   async createNewClass(data) {
     if (!data.name || !data.capacity || !data.gradeId) {

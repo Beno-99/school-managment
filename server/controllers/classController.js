@@ -1,5 +1,5 @@
-import Class from "../DTOs/classDTOs";
-import classRepo from "../repositories/classRepo";
+import Class from "../DTOs/classDTOs.js";
+import classRepo from "../repositories/classRepo.js";
 
 class ClassController {
   async createClass(req, res) {

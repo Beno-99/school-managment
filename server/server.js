@@ -1,4 +1,6 @@
+"use client";
 import teacherRouter from "./routers/teacherRout.js";
+import classRouter from "./routers/classRouter.js";
 import express from "express";
 import cors from "cors";
 
@@ -20,4 +22,4 @@ app.listen(PORT, () => {
 });
 
 app.use("/teacher", teacherRouter);
-app.use("/class");
+app.use("/class", classRouter);
