@@ -88,9 +88,9 @@ const Table: React.FC<Props> = ({
   }, [data]);
 
   return (
-    <div className={`overflow-x-auto  ${className}`}>
-      <table className="min-w-full  bg-white border border-gray-200 ">
-        <thead className="bg-gray-50 ">
+    <div className={`overflow-x-auto  ${className} h-[580px] `}>
+      <table className="min-w-full  bg-white border border-gray-200 overflow-y-scroll ">
+        <thead className="bg-gray-50 sticky top-0 z-10">
           <tr>
             {columns &&
               columns.map((column) => (
