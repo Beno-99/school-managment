@@ -1,4 +1,4 @@
-import TeacherDTOs from "../DTOs/teacherDTOs.js";
+import TeacherDTO from "../DTOs/teacherDTO.js";
 import teacherRepo from "../repositories/teacherRepo.js";
 
 class TeacherController {
@@ -39,7 +39,7 @@ class TeacherController {
           .json({ error: "All required fields must be provided" });
       }
 
-      const teacherData = new TeacherDTOs(req.body); // Only proceed after validation
+      const teacherData = new TeacherDTO(req.body); // Only proceed after validation
       const newTeacher = await teacherRepo.createNewTeacher(teacherData);
       res.status(201).json(newTeacher);
     } catch (error) {

@@ -51,6 +51,30 @@ const Table: React.FC<Props> = ({
     });
   }, [data, sortColumn, sortDirection]);
 
+  const renderCellValue = (value: any): React.ReactNode => {
+    // Handle null or undefined
+    if (value === null || value === undefined) {
+      return '-';
+    }
+    
+    // Handle arrays (like classes, subjects, lessons)
+    if (Array.isArray(value)) {
+      return value.map((item, index) => (
+        <div key={index} className="text-xs">
+          {typeof item === 'object' ? item.name || JSON.stringify(item) : item}
+        </div>
+      ));
+    }
+    
+    // Handle objects
+    if (typeof value === 'object') {
+      return value.name || JSON.stringify(value);
+    }
+    
+    // Return primitive values as is
+    return value;
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center p-4">
@@ -99,7 +123,7 @@ const Table: React.FC<Props> = ({
                   >
                     {column.render
                       ? column.render(row[column.key])
-                      : row[column.key]}
+                      : renderCellValue(row[column.key])}
                   </td>
                 ))}
               </tr>
