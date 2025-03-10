@@ -13,9 +13,9 @@ class TeacherRepo {
         address: data.address,
         bloodType: data.bloodType,
         sex: data.sex,
-        subjects: data.subjects ? { connect: data.subjects } : undefined,
-        classes: data.classes ? { connect: data.classes } : undefined,
-        lessons: data.lessons ? { connect: data.lessons } : undefined,
+        subjects: data.subjects,
+        classes: data.classes,
+        lessons: data.lessons,
         birthday: data.birthday, // Must be a valid ISO-8601 DateTime string
       },
     });
