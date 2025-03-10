@@ -54,11 +54,11 @@ async function main() {
     await prisma.subject.create({ data: subject });
   }
 
-  // TEACHER
+  // Then create teachers and connect them to subjects
   for (let i = 1; i <= 15; i++) {
     await prisma.teacher.create({
       data: {
-        id: `teacher${i}`, // Unique ID for the teacher
+        id: `teacher${i}`,
         username: `teacher${i}`,
         name: `TName${i}`,
         surname: `TSurname${i}`,
@@ -67,8 +67,8 @@ async function main() {
         address: `Address${i}`,
         bloodType: "A+",
         sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
-        subjects: { connect: [{ id: (i % 10) + 1 }] },
-        classes: { connect: [{ id: (i % 6) + 1 }] },
+        subjects: { connect: [{ id: (i % 10) + 1 }] }, // Ensure subject exists
+        classes: { connect: [{ id: (i % 6) + 1 }] }, // Ensure class exists
         birthday: new Date(
           new Date().setFullYear(new Date().getFullYear() - 30)
         ),
@@ -215,3 +215,50 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+
+// import { Day, PrismaClient, UserSex } from "@prisma/client";
+// const prisma = new PrismaClient();
+
+// async function main() {
+//   // Clear existing data
+//   await prisma.admin.deleteMany();
+//   await prisma.grade.deleteMany();
+//   await prisma.class.deleteMany();
+//   await prisma.subject.deleteMany();
+//   await prisma.teacher.deleteMany();
+//   await prisma.lesson.deleteMany();
+//   await prisma.parent.deleteMany();
+//   await prisma.student.deleteMany();
+//   await prisma.exam.deleteMany();
+//   await prisma.assignment.deleteMany();
+//   await prisma.result.deleteMany();
+//   await prisma.attendance.deleteMany();
+//   await prisma.event.deleteMany();
+//   await prisma.announcement.deleteMany();
+
+//   // ADMIN
+//   await prisma.admin.create({
+//     data: {
+//       id: "admin1",
+//       username: "admin1",
+//     },
+//   });
+//   await prisma.admin.create({
+//     data: {
+//       id: "admin2",
+//       username: "admin2",
+//     },
+//   });
+
+//   // Rest of your seeding logic...
+// }
+
+// main()
+//   .then(async () => {
+//     await prisma.$disconnect();
+//   })
+//   .catch(async (e) => {
+//     console.error(e);
+//     await prisma.$disconnect();
+//     process.exit(1);
+//   });
