@@ -41,13 +41,22 @@ const Table: React.FC<Props> = ({
     if (!sortColumn) return data;
 
     return [...data].sort((a, b) => {
-      const aValue = a[sortColumn as keyof typeof a]; // ✅ Explicitly tell TypeScript
+      const aValue = a[sortColumn as keyof typeof a];
       const bValue = b[sortColumn as keyof typeof b];
 
-      if (aValue === bValue) return 0;
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortDirection === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
 
-      const compareResult = aValue > bValue ? 1 : -1;
-      return sortDirection === "asc" ? compareResult : -compareResult;
+      return sortDirection === "asc"
+        ? aValue > bValue
+          ? 1
+          : -1
+        : aValue < bValue
+        ? 1
+        : -1;
     });
   }, [data, sortColumn, sortDirection]);
 
@@ -60,50 +69,53 @@ const Table: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    console.log(data);
+    console.log("Table data:", data);
   }, [data]);
 
   return (
-    <div className={`overflow-x-auto  ${className}`}>
-      <table className="min-w-full  bg-white border border-gray-200 ">
-        <thead className="bg-gray-50 ">
+    <div className={`overflow-x-auto ${className}`}>
+      <table className="min-w-full bg-white border border-gray-200">
+        <thead className="bg-gray-50">
           <tr>
-            {columns &&
-              columns.map((column) => (
-                <th
-                  key={column.key}
-                  onClick={() => column.sortable && handleSort(column.key)}
-                  className={`
-                  px-4 py-2 text-center text-sm font-medium text-gray-500
-                  ${column.sortable ? "cursor-pointer hover:bg-gray-100" : ""}
-                `}
-                >
-                  <div className="flex items-center gap-2 justify-center">
-                    {column.label}
-                    {column.sortable && sortColumn === column.key && (
-                      <span>{sortDirection === "asc" ? "↑" : "↓"}</span>
-                    )}
-                  </div>
-                </th>
-              ))}
+            {columns.map((column) => (
+              <th
+                key={column.key}
+                onClick={() => column.sortable && handleSort(column.key)}
+                className={`px-4 py-2 text-center text-sm font-medium text-gray-500 ${
+                  column.sortable ? "cursor-pointer hover:bg-gray-100" : ""
+                }`}
+              >
+                <div className="flex items-center gap-2 justify-center">
+                  {column.label}
+                  {column.sortable && sortColumn === column.key && (
+                    <span>{sortDirection === "asc" ? "↑" : "↓"}</span>
+                  )}
+                </div>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 text-center">
-          {data &&
-            data?.map((row: any, rowIndex: React.Key | null | undefined) => (
-              <tr key={rowIndex} className="hover:bg-gray-50">
-                {columns.map((column) => (
-                  <td
-                    key={`${rowIndex}-${column.key}`}
-                    className="px-4 py-2 text-sm text-gray-900"
-                  >
-                    {column.render
-                      ? column.render(row[column.key])
-                      : row[column.key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
+          {sortedData.map((row, rowIndex) => (
+            <tr key={rowIndex} className="hover:bg-gray-50">
+              {columns.map((column) => (
+                <td
+                  key={`${rowIndex}-${column.key}`}
+                  className="px-4 py-2 text-sm text-gray-900"
+                >
+                  {(() => {
+                    const value = row[column.key as keyof typeof row];
+                    console.log(`Rendering [${column.key}]:`, value); // Debug log
+
+                    if (column.render) return column.render(value);
+                    if (typeof value === "object" && value !== null)
+                      return JSON.stringify(value);
+                    return value;
+                  })()}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
