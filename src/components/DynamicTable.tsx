@@ -96,7 +96,7 @@ const Table: React.FC<Props> = ({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 text-center">
-          {sortedData.map((row, rowIndex) => (
+          {/* {sortedData.map((row, rowIndex) => (
             <tr key={rowIndex} className="hover:bg-gray-50">
               {columns.map((column) => (
                 <td
@@ -114,6 +114,36 @@ const Table: React.FC<Props> = ({
                   })()}
                 </td>
               ))}
+            </tr>
+          ))} */}
+          {sortedData.map((teacher, index: number) => (
+            <tr key={index}>
+              <td>{teacher.id}</td>
+              <td>{teacher.name}</td>
+              <td>
+                {teacher.subjects?.map((subject: any, subIndex: number) => (
+                  <span>
+                    {subject.lenght > 1
+                      ? `(${teacher.subjects
+                          .map((subject) => subject.name)
+                          .join(", ")})`
+                      : `${subject.name}`}
+                    {subIndex}
+                  </span>
+                ))}
+              </td>
+              <td>
+                {teacher.subjects?.map((subject: any, subIndex: number) => (
+                  <span>
+                    {subject.lenght > 1
+                      ? `(${teacher.subjects
+                          .map((subject) => subject.name)
+                          .join(", ")})`
+                      : `${subject.name}`}
+                    {subIndex}
+                  </span>
+                ))}
+              </td>
             </tr>
           ))}
         </tbody>
