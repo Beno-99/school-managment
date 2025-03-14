@@ -128,22 +128,20 @@ const Table: React.FC<Props> = ({
                           .map((subject) => subject.name)
                           .join(", ")})`
                       : `${subject.name}`}
-                    {subIndex}
                   </span>
                 ))}
               </td>
               <td>
-                {teacher.subjects?.map((subject: any, subIndex: number) => (
-                  <span>
-                    {subject.lenght > 1
-                      ? `(${teacher.subjects
-                          .map((subject) => subject.name)
-                          .join(", ")})`
-                      : `${subject.name}`}
-                    {subIndex}
+                {teacher.classes?.map((cls: any, classIndex: number) => (
+                  <span key={classIndex}>
+                    {cls.lenght > 1
+                      ? `(${teacher.classes.map((cls) => cls.name).join(", ")})`
+                      : `${cls.name}`}
                   </span>
                 ))}
               </td>
+              <td>{teacher.phone}</td>
+              <td>{teacher.address}</td>
             </tr>
           ))}
         </tbody>
