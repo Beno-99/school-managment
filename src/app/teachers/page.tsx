@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import apiClient from "../../../utils/apiClient";
-import Table from "../../components/DynamicTable";
+import Table from "../../components/DynamicTable@";
 
 export interface Teacher {
   id: string;
@@ -26,10 +26,14 @@ export interface Teacher {
 
 const TeacherPage = () => {
   const [teachersFetch, setTeachersFetch] = useState<Teacher[]>([]);
+  const [page, setPage] = useState(1);
   const { data: teachers = [] } = useQuery({
-    queryKey: ["teachers"],
+    queryKey: ["teachers", page], // Query key includes page number
+
     queryFn: async () => {
-      const response = await apiClient.get("teacher/getAllTeachers");
+      const response = await apiClient.get(
+        `teacher/getAllTeachers?page=${page}`
+      );
       console.log("fetched Teachers :", response.data.teachers);
       if (Array.isArray(response.data.teachers)) {
         console.log("stateData :", response.data.teachers);
@@ -105,40 +109,47 @@ const TeacherPage = () => {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      name: "John Doe",
-      status: "Active",
-      subjects: "Mathematics",
-      classes: "5A",
-      phone: "0944536234",
-      address: "Address10",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      status: "Inactive",
-      subjects: "English",
-      classes: "1A",
-      phone: "0944536234",
-      address: "Address10",
-    },
-    {
-      id: 3,
-      name: "Bob Johnson",
-      status: "Active",
-      subjects: "Science",
-      classes: "2A",
-      phone: "0944536234",
-      address: "Address10",
-    },
-  ];
+  const bodyRender = () => (
+    <>
+      {teachers.map((teacher: Teacher, index: number) => (
+        <tr key={index} className="text-center">
+          <td>{teacher.id}</td>
+          <td>{teacher.name}</td>
+          <td>
+            {teacher.subjects?.map((subject: any, subIndex: number) => (
+              <span key={subIndex}>
+                {teacher.subjects.length > 1
+                  ? `(${teacher.subjects
+                      .map((subject) => subject.name)
+                      .join(", ")})`
+                  : `${subject.name}`}
+              </span>
+            ))}
+          </td>
+          <td>
+            {teacher.classes?.map((cls: any, classIndex: number) => (
+              <span key={classIndex}>
+                {teacher.classes.length > 1
+                  ? `(${teacher.classes.map((cls) => cls.name).join(", ")})`
+                  : `${cls.name}`}
+              </span>
+            ))}
+          </td>
+          <td>{teacher.phone}</td>
+          <td>{teacher.address}</td>
+        </tr>
+      ))}
+    </>
+  );
 
   return (
     <div className="p-6 w-[83vw] ">
       <h1 className="text-2xl font-bold mb-4">Teachers</h1>
-      <Table columns={columns} data={teachers} className="rounded-lg shadow " />
+      <Table
+        column={columns}
+        render={bodyRender}
+        className="rounded-lg shadow "
+      />
     </div>
   );
 };
