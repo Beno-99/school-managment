@@ -2,6 +2,22 @@ import { Day, PrismaClient, UserSex } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  // Clear existing data
+  await prisma.admin.deleteMany();
+  await prisma.grade.deleteMany();
+  await prisma.class.deleteMany();
+  await prisma.subject.deleteMany();
+  await prisma.teacher.deleteMany();
+  await prisma.lesson.deleteMany();
+  await prisma.parent.deleteMany();
+  await prisma.student.deleteMany();
+  await prisma.exam.deleteMany();
+  await prisma.assignment.deleteMany();
+  await prisma.result.deleteMany();
+  await prisma.attendance.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.announcement.deleteMany();
+
   // ADMIN
   await prisma.admin.create({
     data: {
@@ -54,11 +70,24 @@ async function main() {
     await prisma.subject.create({ data: subject });
   }
 
+  // Verify that Subjects and Classes exist
+  const subjects = await prisma.subject.findMany();
+  console.log("Subjects:", subjects);
+
+  const classes = await prisma.class.findMany();
+  console.log("Classes:", classes);
+
   // TEACHER
   for (let i = 1; i <= 15; i++) {
+    const subjectId = subjects[i % 10].id; // Use the actual Subject ID
+    const classId = classes[i % 6].id; // Use the actual Class ID
+
+    console.log(`Connecting Teacher ${i} to Subject ID: ${subjectId}`);
+    console.log(`Connecting Teacher ${i} to Class ID: ${classId}`);
+
     await prisma.teacher.create({
       data: {
-        id: `teacher${i}`, // Unique ID for the teacher
+        id: `teacher${i}`,
         username: `teacher${i}`,
         name: `TName${i}`,
         surname: `TSurname${i}`,
@@ -67,8 +96,8 @@ async function main() {
         address: `Address${i}`,
         bloodType: "A+",
         sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
-        subjects: { connect: [{ id: (i % 10) + 1 }] },
-        classes: { connect: [{ id: (i % 6) + 1 }] },
+        subjects: { connect: [{ id: subjectId }] }, // Connect to existing Subject
+        classes: { connect: [{ id: classId }] }, // Connect to existing Class
         birthday: new Date(
           new Date().setFullYear(new Date().getFullYear() - 30)
         ),

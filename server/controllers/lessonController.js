@@ -6,7 +6,9 @@ class LessonController {
     try {
       const lessonDto = new lessonDTOs(req.body);
       const newLesson = await lessonRepo.createNewLesson(lessonDto);
-      req.status(201).json(newLesson);
+      res
+        .status(200)
+        .json({ message: "Lesson created successfully", newLesson });
     } catch (error) {
       res.send(error);
     }

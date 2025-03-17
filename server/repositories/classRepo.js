@@ -16,7 +16,7 @@ class ClassRepository {
     } catch (error) {
       return {
         status: 400,
-        error: "failed to create class",
+        error: error.message,
       };
     }
   }
