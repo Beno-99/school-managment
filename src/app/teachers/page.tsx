@@ -1,5 +1,6 @@
 "use client";
 
+import Pagination from "@/components/Pagination";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -116,27 +117,27 @@ const TeacherPage = () => {
           <td>{teacher.id}</td>
           <td>{teacher.name}</td>
           <td>
-            {teacher.subjects?.map((subject: any, subIndex: number) => (
-              <span key={subIndex}>
-                {teacher.subjects.length > 1
-                  ? `(${teacher.subjects
-                      .map((subject) => subject.name)
-                      .join(", ")})`
-                  : `${subject.name}`}
-              </span>
-            ))}
+            {teacher.subjects && teacher.subjects.length > 0
+              ? `(${teacher.subjects
+                  .map((subject) => subject.name)
+                  .join(", ")})`
+              : "No Subjects"}
           </td>
           <td>
-            {teacher.classes?.map((cls: any, classIndex: number) => (
-              <span key={classIndex}>
-                {teacher.classes.length > 1
-                  ? `(${teacher.classes.map((cls) => cls.name).join(", ")})`
-                  : `${cls.name}`}
-              </span>
-            ))}
+            {teacher.classes && teacher.classes.length > 0
+              ? `(${teacher.classes.map((cls) => cls.name).join(", ")})`
+              : "No classes"}
           </td>
           <td>{teacher.phone}</td>
           <td>{teacher.address}</td>
+          <td className="flex justify-center gap-3">
+            <button className="bg-green-300 py-1 px-3 rounded-xl text-green-900 hover:bg-green-400">
+              Edit
+            </button>
+            <button className="bg-red-300 py-1 px-3 rounded-xl text-red-900 hover:bg-red-400">
+              Action
+            </button>
+          </td>
         </tr>
       ))}
     </>
@@ -145,11 +146,14 @@ const TeacherPage = () => {
   return (
     <div className="p-6 w-[83vw] ">
       <h1 className="text-2xl font-bold mb-4">Teachers</h1>
-      <Table
-        column={columns}
-        render={bodyRender}
-        className="rounded-lg shadow "
-      />
+      <div className="flex flex-col justify-center text-center items-center">
+        <Table
+          column={columns}
+          render={bodyRender}
+          className="rounded-lg shadow "
+        />
+        {/* <Pagination count={}page={}/> */}
+      </div>
     </div>
   );
 };
