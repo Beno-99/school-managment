@@ -47,5 +47,15 @@ class TeacherRepo {
       console.log("error :", error);
     }
   }
+  async getTeacherCount() {
+    try {
+      const count = await prisma.teacher.count();
+      if (count) {
+        return count;
+      }
+    } catch (error) {
+      return error;
+    }
+  }
 }
 export default new TeacherRepo();

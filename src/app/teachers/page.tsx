@@ -6,7 +6,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import apiClient from "../../../utils/apiClient";
 import Table from "../../components/DynamicTable@";
-import { ITEM_PER_PAGE, COUNT_TEACHERS } from "@/components/lib/settings";
+import { ITEM_PER_PAGE } from "@/components/lib/settings";
+import { useSearchParams } from "next/navigation";
 
 export interface Teacher {
   id: string;
@@ -26,24 +27,29 @@ export interface Teacher {
   createdAt: string;
 }
 
-const TeacherPage = async ({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | undefined };
-}) => {
+const TeacherPage = () => {
   const [teachersFetch, setTeachersFetch] = useState<Teacher[]>([]);
+  const [TeachersCount, setTeachersCount] = useState<number>(0);
 
-  console.log(searchParams);
-  const { page, ...queryParams } = searchParams;
-  const p = searchParams.page ? parseInt(searchParams.page) : 1;
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const p = pageParam ? parseInt(pageParam) : 1;
 
   const { data: teachers } = useQuery({
     queryKey: ["teachers", p],
     queryFn: async () => {
-      const res = await fetch(`/api/teachers?page=${p}`);
-      return await res.json();
+      const res = await apiClient.get(`/teacher/getAllTeachers?page=${p}`);
+      console.log(res);
+
+      return res.data.teachers;
     },
   });
+
+  const COUNT_TEACHERS = async () => {
+    const { data: count } = await apiClient.get("/teacher/getTeacherCount");
+    setTeachersCount(count);
+    console.log(count);
+  };
 
   console.log("stateData :", teachersFetch);
   useEffect(() => {
@@ -51,6 +57,17 @@ const TeacherPage = async ({
       console.error("API response is not an array:", teachersFetch);
     }
   }, [teachersFetch]);
+
+  useEffect(() => {
+    COUNT_TEACHERS();
+  }, []);
+
+  useEffect(() => {
+    if (teachers) {
+      setTeachersFetch(teachers);
+    }
+  }, [teachers]);
+
   const columns = [
     {
       key: "id",
@@ -111,34 +128,35 @@ const TeacherPage = async ({
 
   const bodyRender = () => (
     <>
-      {teachers.map((teacher: Teacher, index: number) => (
-        <tr key={index} className="text-center">
-          <td>{teacher.id}</td>
-          <td>{teacher.name}</td>
-          <td>
-            {teacher.subjects && teacher.subjects.length > 0
-              ? `(${teacher.subjects
-                  .map((subject) => subject.name)
-                  .join(", ")})`
-              : "No Subjects"}
-          </td>
-          <td>
-            {teacher.classes && teacher.classes.length > 0
-              ? `(${teacher.classes.map((cls) => cls.name).join(", ")})`
-              : "No classes"}
-          </td>
-          <td>{teacher.phone}</td>
-          <td>{teacher.address}</td>
-          <td className="flex justify-center gap-3">
-            <button className="bg-green-300 py-1 px-3 rounded-xl text-green-900 hover:bg-green-400">
-              Edit
-            </button>
-            <button className="bg-red-300 py-1 px-3 rounded-xl text-red-900 hover:bg-red-400">
-              Action
-            </button>
-          </td>
-        </tr>
-      ))}
+      {teachers &&
+        teachers.map((teacher: Teacher, index: number) => (
+          <tr key={index} className="text-center">
+            <td>{teacher.id}</td>
+            <td>{teacher.name}</td>
+            <td>
+              {teacher.subjects && teacher.subjects.length > 0
+                ? `(${teacher.subjects
+                    .map((subject) => subject.name)
+                    .join(", ")})`
+                : "No Subjects"}
+            </td>
+            <td>
+              {teacher.classes && teacher.classes.length > 0
+                ? `(${teacher.classes.map((cls) => cls.name).join(", ")})`
+                : "No classes"}
+            </td>
+            <td>{teacher.phone}</td>
+            <td>{teacher.address}</td>
+            <td className="flex justify-center gap-3">
+              <button className="bg-green-300 py-1 px-3 rounded-xl text-green-900 hover:bg-green-400">
+                Edit
+              </button>
+              <button className="bg-red-300 py-1 px-3 rounded-xl text-red-900 hover:bg-red-400">
+                Action
+              </button>
+            </td>
+          </tr>
+        ))}
     </>
   );
 
@@ -151,7 +169,7 @@ const TeacherPage = async ({
           render={bodyRender}
           className="rounded-lg shadow "
         />
-        <Pagination page={p} count={COUNT_TEACHERS} />
+        <Pagination page={p} count={TeachersCount} />
       </div>
     </div>
   );

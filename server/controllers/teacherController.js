@@ -74,5 +74,13 @@ class TeacherController {
       res.status(500).json({ error: error.message });
     }
   }
+  async countTeachers(req, res) {
+    try {
+      const count = await teacherRepo.getTeacherCount();
+      res.status(200).json({ status: "success", countTeachers: count });
+    } catch (error) {
+      res.status(404).json({ error: error.message });
+    }
+  }
 }
 export default new TeacherController();
