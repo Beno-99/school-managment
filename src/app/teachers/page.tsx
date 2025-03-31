@@ -6,6 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import apiClient from "../../../utils/apiClient";
 import Table from "../../components/DynamicTable@";
+import { ITEM_PER_PAGE, COUNT_TEACHERS } from "@/components/lib/settings";
 
 export interface Teacher {
   id: string;
@@ -25,27 +26,25 @@ export interface Teacher {
   createdAt: string;
 }
 
-const TeacherPage = () => {
+const TeacherPage = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) => {
   const [teachersFetch, setTeachersFetch] = useState<Teacher[]>([]);
-  const [page, setPage] = useState(1);
-  const { data: teachers = [] } = useQuery({
-    queryKey: ["teachers", page], // Query key includes page number
 
+  console.log(searchParams);
+  const { page, ...queryParams } = searchParams;
+  const p = searchParams.page ? parseInt(searchParams.page) : 1;
+
+  const { data: teachers } = useQuery({
+    queryKey: ["teachers", p],
     queryFn: async () => {
-      const response = await apiClient.get(
-        `teacher/getAllTeachers?page=${page}`
-      );
-      console.log("fetched Teachers :", response.data.teachers);
-      if (Array.isArray(response.data.teachers)) {
-        console.log("stateData :", response.data.teachers);
-        setTeachersFetch(response.data.teachers);
-      }
-
-      return Array.isArray(response.data.teachers)
-        ? response.data.teachers
-        : [];
+      const res = await fetch(`/api/teachers?page=${p}`);
+      return await res.json();
     },
   });
+
   console.log("stateData :", teachersFetch);
   useEffect(() => {
     if (!Array.isArray(teachersFetch)) {
@@ -152,7 +151,7 @@ const TeacherPage = () => {
           render={bodyRender}
           className="rounded-lg shadow "
         />
-        {/* <Pagination count={}page={}/> */}
+        <Pagination page={p} count={COUNT_TEACHERS} />
       </div>
     </div>
   );

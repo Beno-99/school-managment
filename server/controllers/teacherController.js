@@ -49,7 +49,7 @@ class TeacherController {
 
   async getTeachers(req, res) {
     try {
-      const page = parseInt(req.query.page) || 1;
+      const page = parseInt(req.query.page);
       const teachers = await teacherRepo.getAllteacher(page);
       res.status(201).json({ status: "success", teachers: teachers });
     } catch (error) {

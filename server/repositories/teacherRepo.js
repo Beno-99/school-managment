@@ -1,4 +1,5 @@
 import prisma from "../database.js";
+import { ITEM_PER_PAGE_TEACHERS } from "../lib/settings.js";
 
 class TeacherRepo {
   async createNewTeacher(data) {
@@ -25,8 +26,8 @@ class TeacherRepo {
   async getAllteacher(page) {
     try {
       const AllTeachers = await prisma.teacher.findMany({
-        skip: 10 * (page - 1),
-        take: 10,
+        skip: ITEM_PER_PAGE_TEACHERS * (page - 1),
+        take: ITEM_PER_PAGE_TEACHERS,
         include: { subjects: true, classes: true, lessons: true },
       });
       return AllTeachers;
