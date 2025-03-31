@@ -18,12 +18,15 @@ class TeacherRepo {
         lessons: data.lessons,
         birthday: data.birthday, // Must be a valid ISO-8601 DateTime string
       },
+      include: { classes: true, lessons: true, subjects: true },
     });
   }
 
-  async getAllteacher() {
+  async getAllteacher(page) {
     try {
       const AllTeachers = await prisma.teacher.findMany({
+        skip: 10 * (page - 1),
+        take: 10,
         include: { subjects: true, classes: true, lessons: true },
       });
       return AllTeachers;

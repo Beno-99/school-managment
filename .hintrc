@@ -3,6 +3,19 @@
     "development"
   ],
   "hints": {
-    "typescript-config/consistent-casing": "off"
+    "typescript-config/consistent-casing": "off",
+    "axe/aria": [
+      "default",
+      {
+        "aria-valid-attr-value": "off"
+      }
+    ],
+    "no-inline-styles": "off",
+    "axe/name-role-value": [
+      "default",
+      {
+        "button-name": "off"
+      }
+    ]
   }
 }

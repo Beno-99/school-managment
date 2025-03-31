@@ -27,21 +27,21 @@ class TeacherDTO {
     // Convert sex to uppercase to match the UserSex enum
     this.sex = sex.toUpperCase();
     this.birthday = birthday;
-
+    
     // Format classes for proper connection in Prisma
-    this.classes = {
-      connect: classes.map(classItem => ({ id: parseInt(classItem.id) }))
-    };
-
+    this.classes = classes.map((classItem) => ({
+      connect: { id: classItem.id }
+    }));
+    
     // Format lessons for proper connection in Prisma
-    this.lessons = {
-      connect: lessons.map(lessonItem => ({ id: parseInt(lessonItem.id) }))
-    };
-
+    this.lessons = lessons.map((lessonItem) => ({
+      connect: { id: lessonItem.id }
+    }));
+    
     // Format subjects for proper connection in Prisma
-    this.subjects = {
-      connect: subjects.map(subjectItem => ({ id: parseInt(subjectItem.id) }))
-    };
+    this.subjects = subjects.map((subjectItem) => ({
+      connect: { id: subjectItem.id }
+    }));
   }
 }
 export default TeacherDTO;

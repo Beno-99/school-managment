@@ -41,13 +41,22 @@ const Table: React.FC<Props> = ({
     if (!sortColumn) return data;
 
     return [...data].sort((a, b) => {
-      const aValue = a[sortColumn as keyof typeof a]; // ✅ Explicitly tell TypeScript
+      const aValue = a[sortColumn as keyof typeof a];
       const bValue = b[sortColumn as keyof typeof b];
 
-      if (aValue === bValue) return 0;
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortDirection === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
 
-      const compareResult = aValue > bValue ? 1 : -1;
-      return sortDirection === "asc" ? compareResult : -compareResult;
+      return sortDirection === "asc"
+        ? aValue > bValue
+          ? 1
+          : -1
+        : aValue < bValue
+        ? 1
+        : -1;
     });
   }, [data, sortColumn, sortDirection]);
 
@@ -84,32 +93,30 @@ const Table: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    console.log(data);
+    console.log("Table data:", data);
   }, [data]);
 
   return (
-    <div className={`overflow-x-auto  ${className} h-[580px] `}>
-      <table className="min-w-full  bg-white border border-gray-200 overflow-y-scroll ">
-        <thead className="bg-gray-50 sticky top-0 z-10">
+    <div className={`overflow-x-auto  ${className}`}>
+      <table className="min-w-full  bg-white border border-gray-200 ">
+        <thead className="bg-gray-50 ">
           <tr>
-            {columns &&
-              columns.map((column) => (
-                <th
-                  key={column.key}
-                  onClick={() => column.sortable && handleSort(column.key)}
-                  className={`
-                  px-4 py-2 text-center text-sm font-medium text-gray-500
-                  ${column.sortable ? "cursor-pointer hover:bg-gray-100" : ""}
-                `}
-                >
-                  <div className="flex items-center gap-2 justify-center">
-                    {column.label}
-                    {column.sortable && sortColumn === column.key && (
-                      <span>{sortDirection === "asc" ? "↑" : "↓"}</span>
-                    )}
-                  </div>
-                </th>
-              ))}
+            {columns.map((column) => (
+              <th
+                key={column.key}
+                onClick={() => column.sortable && handleSort(column.key)}
+                className={`px-4 py-2 text-center text-sm font-medium text-gray-500 ${
+                  column.sortable ? "cursor-pointer hover:bg-gray-100" : ""
+                }`}
+              >
+                <div className="flex items-center gap-2 justify-center">
+                  {column.label}
+                  {column.sortable && sortColumn === column.key && (
+                    <span>{sortDirection === "asc" ? "↑" : "↓"}</span>
+                  )}
+                </div>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 text-center">
@@ -123,7 +130,7 @@ const Table: React.FC<Props> = ({
                   >
                     {column.render
                       ? column.render(row[column.key])
-                      : renderCellValue(row[column.key])}
+                      : row[column.key]}
                   </td>
                 ))}
               </tr>
