@@ -32,8 +32,8 @@ const TeacherPage = () => {
   const [TeachersCount, setTeachersCount] = useState<number>(0);
 
   const searchParams = useSearchParams();
-  const pageParam = searchParams.get("page");
-  const p = pageParam ? parseInt(pageParam) : 1;
+  const pageParams = searchParams.get("page");
+  const p = pageParams ? parseInt(pageParams) : 1;
 
   const { data: teachers } = useQuery({
     queryKey: ["teachers", p],
@@ -47,8 +47,8 @@ const TeacherPage = () => {
 
   const COUNT_TEACHERS = async () => {
     const { data: count } = await apiClient.get("/teacher/getTeacherCount");
-    setTeachersCount(count);
-    console.log(count);
+    setTeachersCount(count.countTeachers);
+    console.log(count.countTeachers);
   };
 
   console.log("stateData :", teachersFetch);
