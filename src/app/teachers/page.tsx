@@ -34,6 +34,8 @@ const TeacherPage = () => {
   const searchParams = useSearchParams();
   const pageParams = searchParams.get("page");
   const p = pageParams ? parseInt(pageParams) : 1;
+  const clsId = searchParams.get("classId");
+  const ClassId = clsId ? parseInt(clsId) : null;
 
   const { data: teachers } = useQuery({
     queryKey: ["teachers", p],
